@@ -338,10 +338,26 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
 
             @Override
             public void onReceive(Context context, Intent intent) {
+
+                //showDownloadCompleteDialog(context);
+
+                String path = "";
+                try {
+                    long completeDownloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+                    if(completeDownloadId != -1){
+                        DownloadManager.Query query = new DownloadManager.Query();
+                        //通过下载的id查找
+                        query.setFilterById(completeDownloadId);
+                        Cursor cursor =  ((DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE)).query(query);
+                        path = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                    }
+                }catch (Throwable e){
+                    e.printStackTrace();
+                }
                 Toast.makeText(context.getApplicationContext(),
                         BrowserActivity.this.getResources().getString(R.string.toast_downloadComplete)
-                                +"\n"+intent.getData(),Toast.LENGTH_SHORT).show();
-                //showDownloadCompleteDialog(context);
+                                +"\n"+path,Toast.LENGTH_SHORT).show();
+
             }
         };
 
