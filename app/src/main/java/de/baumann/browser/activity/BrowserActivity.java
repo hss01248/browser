@@ -340,7 +340,7 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
             public void onReceive(Context context, Intent intent) {
                 Toast.makeText(context.getApplicationContext(),
                         BrowserActivity.this.getResources().getString(R.string.toast_downloadComplete)
-                                +"\n"+intent.getDataString(),Toast.LENGTH_SHORT).show();
+                                +"\n"+intent.getData(),Toast.LENGTH_SHORT).show();
                 //showDownloadCompleteDialog(context);
             }
         };
@@ -2378,13 +2378,19 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
                 try {
                     hideBottomSheetDialog ();
 
+                    String filename = URLUtil.guessFileName(url, null, null);
+                    if(BrowserUnit.isImage(url,null,null)){
+                        download("title",".jpg","",url);
+                        return;
+                    }
+
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     View dialogView = View.inflate(context, R.layout.dialog_edit_extension, null);
 
                     final EditText editTitle = dialogView.findViewById(R.id.dialog_edit);
                     final EditText editExtension = dialogView.findViewById(R.id.dialog_edit_extension);
 
-                    String filename = URLUtil.guessFileName(url, null, null);
+
 
                     editTitle.setHint(R.string.dialog_title_hint);
                     editTitle.setText(HelperUnit.fileName(ninjaWebView.getUrl()));
@@ -2404,37 +2410,7 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
                             String extension = editExtension.getText().toString().trim();
                             String  filename = title + extension;
 
-                            if (title.isEmpty() || extension.isEmpty() || !extension.startsWith(".")) {
-                                NinjaToast.show(context, getString(R.string.toast_input_empty));
-                            } else {
-
-                                if (android.os.Build.VERSION.SDK_INT >= 23) {
-                                    int hasWRITE_EXTERNAL_STORAGE = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                                    if (hasWRITE_EXTERNAL_STORAGE != PackageManager.PERMISSION_GRANTED) {
-                                        HelperUnit.grantPermissionsStorage(activity);
-                                    } else {
-                                        Uri source = Uri.parse(url);
-                                        DownloadManager.Request request = new DownloadManager.Request(source);
-                                        request.addRequestHeader("Cookie", CookieManager.getInstance().getCookie(url));
-                                        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED); //Notify client once download is completed!
-                                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
-                                        DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-                                        assert dm != null;
-                                        dm.enqueue(request);
-                                        hideKeyboard(activity);
-                                    }
-                                } else {
-                                    Uri source = Uri.parse(url);
-                                    DownloadManager.Request request = new DownloadManager.Request(source);
-                                    request.addRequestHeader("Cookie", CookieManager.getInstance().getCookie(url));
-                                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED); //Notify client once download is completed!
-                                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
-                                    DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-                                    assert dm != null;
-                                    dm.enqueue(request);
-                                    hideKeyboard(activity);
-                                }
-                            }
+                            download(title, extension, filename, url);
                         }
                     });
                     builder.setNegativeButton(R.string.app_cancel, new DialogInterface.OnClickListener() {
@@ -2455,6 +2431,41 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
         bottomSheetDialog.setContentView(dialogView);
         bottomSheetDialog.show();
         HelperUnit.setBottomSheetBehavior(bottomSheetDialog, dialogView, BottomSheetBehavior.STATE_EXPANDED);
+    }
+
+    private void download(String title, String extension, String filename, String url) {
+        if (title.isEmpty() || extension.isEmpty() || !extension.startsWith(".")) {
+            NinjaToast.show(context, getString(R.string.toast_input_empty));
+        } else {
+            BrowserUnit.startDownload(url,"","",filename,this);
+            hideKeyboard(activity);
+           /* if (Build.VERSION.SDK_INT >= 23) {
+                int hasWRITE_EXTERNAL_STORAGE = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                if (hasWRITE_EXTERNAL_STORAGE != PackageManager.PERMISSION_GRANTED) {
+                    HelperUnit.grantPermissionsStorage(activity);
+                } else {
+                    Uri source = Uri.parse(url);
+                    DownloadManager.Request request = new DownloadManager.Request(source);
+                    request.addRequestHeader("Cookie", CookieManager.getInstance().getCookie(url));
+                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED); //Notify client once download is completed!
+                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+                    DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                    assert dm != null;
+                    dm.enqueue(request);
+                    hideKeyboard(activity);
+                }
+            } else {
+                Uri source = Uri.parse(url);
+                DownloadManager.Request request = new DownloadManager.Request(source);
+                request.addRequestHeader("Cookie", CookieManager.getInstance().getCookie(url));
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED); //Notify client once download is completed!
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+                DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                assert dm != null;
+                dm.enqueue(request);
+
+            }*/
+        }
     }
 
     @Override

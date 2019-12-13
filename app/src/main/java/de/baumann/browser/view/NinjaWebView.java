@@ -154,7 +154,7 @@ public class NinjaWebView extends WebView implements AlbumController {
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setUseWideViewPort(true);
         if (android.os.Build.VERSION.SDK_INT >= 26) {
-            webSettings.setSafeBrowsingEnabled(true);
+            webSettings.setSafeBrowsingEnabled(false);
         }
     }
 

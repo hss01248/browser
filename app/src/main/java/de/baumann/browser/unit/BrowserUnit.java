@@ -193,7 +193,8 @@ public class BrowserUnit {
     public static void download(final Context context, final String url, final String contentDisposition, final String mimeType) {
 
         if(isImage(url,contentDisposition,mimeType)){
-            startDownload(url,contentDisposition,mimeType,context);
+            startDownload(url,contentDisposition,mimeType,"",context);
+            return;
         }
         String text = context.getString(R.string.dialog_title_download) + " - " + URLUtil.guessFileName(url, contentDisposition, mimeType);
         final BottomSheetDialog dialog = new BottomSheetDialog(context);
@@ -204,7 +205,7 @@ public class BrowserUnit {
         action_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startDownload(url, contentDisposition, mimeType, context);
+                startDownload(url, contentDisposition, mimeType,"", context);
                 dialog.cancel();
             }
         });
@@ -220,20 +221,27 @@ public class BrowserUnit {
         HelperUnit.setBottomSheetBehavior(dialog, dialogView, BottomSheetBehavior.STATE_EXPANDED);
     }
 
-    private static boolean isImage(String url, String contentDisposition, String mimeType) {
+    public static boolean isImage(String url, String contentDisposition, String mimeType) {
+
         if(!TextUtils.isEmpty(mimeType)){
-            return mimeType.contains("image");
+            if(mimeType.contains("image")){
+                return true;
+            }
         }
         String name = URLUtil.guessFileName(url, contentDisposition, mimeType);
-        if(name.contains(".jpg") || name.contains(".png") || name.contains(".gif")|| name.contains(".webp")){
+        if(name.contains(".jpg") || name.contains(".png") || name.contains(".gif")
+                || name.contains(".webp")|| name.contains(".jpeg")){
             return true;
         }
         return false;
     }
 
-    private static void startDownload(String url, String contentDisposition, String mimeType, Context context) {
+    public static void startDownload(String url, String contentDisposition, String mimeType,String fileNameByUser, Context context) {
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
         String filename = URLUtil.guessFileName(url, contentDisposition, mimeType); // Maybe unexpected filename.
+        if(!TextUtils.isEmpty(fileNameByUser)){
+            filename = fileNameByUser;
+        }
 
         CookieManager cookieManager = CookieManager.getInstance();
         String cookie = cookieManager.getCookie(url);
@@ -274,7 +282,7 @@ public class BrowserUnit {
     private static Uri getSaveUri(String url, String filename, String mimeType) {
         Uri uri0 = Uri.parse(url);
         String host = uri0.getHost();
-        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),"ninjiaa"+File.pathSeparator+host);
+        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),"ninjiaa");
         if(!dir.exists()){
             dir.mkdirs();
         }
