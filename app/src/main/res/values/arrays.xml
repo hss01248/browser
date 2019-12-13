@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <!-- Search engine -->
+    <string-array name="setting_entries_search_engine">
+        <item>@string/setting_summary_search_engine_startpage</item>
+        <item>@string/setting_summary_search_engine_startpage_de</item>
+        <item>@string/setting_summary_search_engine_baidu</item>
+        <item>@string/setting_summary_search_engine_bing</item>
+        <item>@string/setting_summary_search_engine_duckduckgo</item>
+        <item>@string/setting_summary_search_engine_google</item>
+        <item>@string/setting_summary_search_engine_searx</item>
+        <item>@string/setting_summary_search_engine_qwant</item>
+        <item>@string/setting_summary_search_engine_ecosia</item>
+        <item>@string/setting_title_searchEngine</item>
+    </string-array>
+
+    <string-array name="setting_values_search_engine">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>9</item>
+        <item>8</item>
+    </string-array>
+
+    <!-- User agent -->
+    <string-array name="setting_entries_nav_pos">
+        <item>@string/setting_summary_nav_pos_right</item>
+        <item>@string/setting_summary_nav_pos_left</item>
+        <item>@string/setting_summary_nav_pos_center</item>
+    </string-array>
+
+    <string-array name="setting_values_nav_pos">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <!-- Gestures -->
+    <string-array name="setting_entries_gestures">
+        <item>@string/setting_gesture_01</item>
+        <item>@string/setting_gesture_02</item>
+        <item>@string/setting_gesture_03</item>
+        <item>@string/setting_gesture_04</item>
+        <item>@string/setting_gesture_05</item>
+        <item>@string/setting_gesture_06</item>
+        <item>@string/setting_gesture_07</item>
+        <item>@string/setting_gesture_08</item>
+        <item>@string/setting_gesture_09</item>
+        <item>@string/setting_gesture_10</item>
+    </string-array>
+
+    <string-array name="setting_values_gestures">
+        <item>01</item>
+        <item>02</item>
+        <item>03</item>
+        <item>04</item>
+        <item>05</item>
+        <item>06</item>
+        <item>07</item>
+        <item>08</item>
+        <item>09</item>
+        <item>10</item>
+    </string-array>
+
+    <!-- Start tab -->
+    <string-array name="setting_entries_tab">
+        <item>@string/album_title_home</item>
+        <item>@string/album_title_bookmarks</item>
+        <item>@string/album_title_history</item>
+    </string-array>
+
+    <string-array name="setting_values_tab">
+        <item>0</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <!-- Font size -->
+    <string-array name="setting_entries_font">
+        <item>75 %</item>
+        <item>90 %</item>
+        <item>100 %</item>
+        <item>110 %</item>
+        <item>125 %</item>
+        <item>150 %</item>
+        <item>175 %</item>
+    </string-array>
+
+    <string-array name="setting_values_font">
+        <item>75</item>
+        <item>90</item>
+        <item>100</item>
+        <item>110</item>
+        <item>125</item>
+        <item>150</item>
+        <item>175</item>
+    </string-array>
+
+    <!-- theme -->
+    <string-array name="setting_entries_theme">
+        <item>@string/setting_theme_system</item>
+        <item>@string/setting_theme_light</item>
+        <item>@string/setting_theme_dark</item>
+        <item>"Amoled"</item>
+    </string-array>
+
+    <string-array name="setting_values_theme">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <!-- General -->
+    <string name="sp_ad_block">SP_AD_BLOCK_9</string>
+    <string name="sp_cookies">SP_COOKIES_9</string>
+    <string name="sp_images">SP_IMAGES_9</string>
+    <string name="sp_javascript">SP_JAVASCRIPT_9</string>
+    <string name="sp_savedata">SP_SAVE_DATA_9</string>
+    <string name="sp_location">SP_LOCATION_9</string>
+    <string name="sp_search_engine">SP_SEARCH_ENGINE_9</string>
+    <string name="sp_search_engine_custom">SP_SEARCH_ENGINE_CUSTOM_9</string>
+
+    <!-- Clear -->
+    <string name="sp_clear_quit">SP_CLEAR_QUIT_9</string>
+    <string name="sp_clear_cache">SP_CLEAR_CACHE_9</string>
+    <string name="sp_clear_cookie">SP_CLEAR_COOKIE_9</string>
+    <string name="sp_clear_history">SP_CLEAR_HISTORY_9</string>
+
+</resources>
