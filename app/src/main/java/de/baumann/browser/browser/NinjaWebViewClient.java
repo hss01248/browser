@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ShortcutManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
@@ -52,6 +53,7 @@ public class NinjaWebViewClient extends WebViewClient {
     private boolean white;
 
     private boolean enable;
+    String pageStartUrl;
     public void enableAdBlock(boolean enable) {
         this.enable = enable;
     }
@@ -65,6 +67,12 @@ public class NinjaWebViewClient extends WebViewClient {
         this.cookie = ninjaWebView.getCookieHosts();
         this.white = false;
         this.enable = true;
+    }
+
+    @Override
+    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+        super.onPageStarted(view, url, favicon);
+        pageStartUrl = url;
     }
 
     @Override
@@ -112,6 +120,11 @@ public class NinjaWebViewClient extends WebViewClient {
     private boolean handleUri(WebView webView, final Uri uri) {
 
         String url = uri.toString();
+        if(!url.equals(pageStartUrl)){
+            return false;
+        }
+
+
         Uri parsedUri = Uri.parse(url);
         PackageManager packageManager = context.getPackageManager();
         Intent browseIntent = new Intent(Intent.ACTION_VIEW).setData(parsedUri);
