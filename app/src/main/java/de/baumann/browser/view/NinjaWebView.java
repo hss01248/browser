@@ -17,10 +17,13 @@ import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
+import de.baumann.browser.Ninja.BuildConfig;
 import de.baumann.browser.browser.*;
 import de.baumann.browser.Ninja.R;
 import de.baumann.browser.unit.BrowserUnit;
 import de.baumann.browser.unit.ViewUnit;
+import uk.co.alt236.webviewdebug.DebugWebChromeClient;
+import uk.co.alt236.webviewdebug.DebugWebViewClient;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -129,8 +132,14 @@ public class NinjaWebView extends WebView implements AlbumController {
     }
 
     private synchronized void initWebView() {
-        setWebViewClient(webViewClient);
-        setWebChromeClient(webChromeClient);
+        DebugWebViewClient viewClient = new DebugWebViewClient(webViewClient);
+        viewClient.setLoggingEnabled(BuildConfig.DEBUG);
+
+        DebugWebChromeClient chromeClient = new DebugWebChromeClient(webChromeClient);
+        chromeClient.setLoggingEnabled(BuildConfig.DEBUG);
+
+        setWebViewClient(viewClient);
+        setWebChromeClient(chromeClient);
         setDownloadListener(downloadListener);
         setOnTouchListener(new OnTouchListener() {
             @SuppressLint("ClickableViewAccessibility")

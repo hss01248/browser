@@ -340,8 +340,10 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
             public void onReceive(Context context, Intent intent) {
 
                 //showDownloadCompleteDialog(context);
-
-                String path = "";
+                Toast.makeText(context.getApplicationContext(),
+                        BrowserActivity.this.getResources().getString(R.string.toast_downloadComplete)
+                        ,Toast.LENGTH_SHORT).show();
+                /*String path = "";
                 try {
                     long completeDownloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
                     if(completeDownloadId != -1){
@@ -356,7 +358,7 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
                 }
                 Toast.makeText(context.getApplicationContext(),
                         BrowserActivity.this.getResources().getString(R.string.toast_downloadComplete)
-                                +"\n"+path,Toast.LENGTH_SHORT).show();
+                                +"\n"+path,Toast.LENGTH_SHORT).show();*/
 
             }
         };
@@ -375,6 +377,9 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
             }, 250);
         }
     }
+
+
+
 
     private void showDownloadCompleteDialog(Context context) {
         bottomSheetDialog = new BottomSheetDialog(context);
@@ -467,6 +472,7 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
 
         BrowserContainer.clear();
         IntentUnit.setContext(null);
+        unregisterReceiver(downloadReceiver);
         super.onDestroy();
     }
 
@@ -479,17 +485,24 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
             case KeyEvent.KEYCODE_BACK:
                 hideKeyboard(activity);
                 hideOverview();
+                if (ninjaWebView.canGoBack()) {
+                    ninjaWebView.goBack();
+                    return true;
+                } else {
+                    removeAlbum(currentAlbumController);
+                }
+
                 if (fullscreenHolder != null || customView != null || videoView != null) {
                     return onHideCustomView();
                 } else if (omnibox.getVisibility() == View.GONE && sp.getBoolean("sp_toolbarShow", true)) {
                     showOmnibox();
-                } else {
+                } /*else {
                     if (ninjaWebView.canGoBack()) {
                         ninjaWebView.goBack();
                     } else {
                         removeAlbum(currentAlbumController);
                     }
-                }
+                }*/
                 return true;
         }
         return false;
@@ -1115,6 +1128,14 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
         updateAutoComplete();
         omniboxRefresh.setOnClickListener(this);
         omniboxOverview.setOnClickListener(this);
+    }
+
+    public void setIcon(Bitmap icon){
+        if(omniboxOverview != null){
+            omniboxOverview.setImageBitmap(icon);
+        }else {
+            omniboxOverview.setImageResource(R.drawable.icon_preview);
+        }
     }
 
     private void performGesture (String gesture) {
@@ -2060,7 +2081,7 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
     }
 
 
-    private synchronized void addAlbum(String title, final String url, final boolean foreground) {
+    public synchronized void addAlbum(String title, final String url, final boolean foreground) {
 
         ninjaWebView = new NinjaWebView(context);
         ninjaWebView.setBrowserController(this);
@@ -2153,6 +2174,9 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
     }
 
     private void updateOmnibox() {
+        if(ninjaWebView == null){
+            return;
+        }
         if (ninjaWebView == currentAlbumController) {
             omniboxTitle.setText(ninjaWebView.getTitle());
         } else {

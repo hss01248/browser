@@ -3,10 +3,12 @@ package de.baumann.browser.browser;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.view.View;
 import android.webkit.*;
 
+import de.baumann.browser.activity.BrowserActivity;
 import de.baumann.browser.unit.HelperUnit;
 import de.baumann.browser.view.NinjaWebView;
 
@@ -24,8 +26,14 @@ public class NinjaWebChromeClient extends WebChromeClient {
         WebView.HitTestResult result = view.getHitTestResult();
         String data = result.getExtra();
         Context context = view.getContext();
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(data));
-        context.startActivity(browserIntent);
+
+        if(context instanceof BrowserActivity){
+            BrowserActivity activity = (BrowserActivity) context;
+            activity.addAlbum("onCreateWindow",data,true);
+        }else {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(data));
+            context.startActivity(browserIntent);
+        }
         return false;
     }
 
@@ -39,6 +47,16 @@ public class NinjaWebChromeClient extends WebChromeClient {
     public void onReceivedTitle(WebView view, String title) {
         super.onReceivedTitle(view, title);
         ninjaWebView.update(title);
+    }
+
+    @Override
+    public void onReceivedIcon(WebView view, Bitmap icon) {
+        super.onReceivedIcon(view, icon);
+        Context context = view.getContext();
+        if(context instanceof BrowserActivity) {
+            BrowserActivity activity = (BrowserActivity) context;
+            activity.setIcon(icon);
+        }
     }
 
     @Override

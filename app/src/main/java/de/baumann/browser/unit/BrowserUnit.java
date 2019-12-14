@@ -263,19 +263,19 @@ public class BrowserUnit {
                 HelperUnit.grantPermissionsStorage(activity);
             } else {
                 manager.enqueue(request);
-                try {
+                /*try {
                     NinjaToast.show(context, R.string.toast_start_download);
                 } catch (Exception e) {
                     Toast.makeText(context, R.string.toast_start_download, Toast.LENGTH_SHORT).show();
-                }
+                }*/
             }
         } else {
             manager.enqueue(request);
-            try {
+            /*try {
                 NinjaToast.show(context, R.string.toast_start_download);
             } catch (Exception e) {
                 Toast.makeText(context, R.string.toast_start_download, Toast.LENGTH_SHORT).show();
-            }
+            }*/
         }
     }
 

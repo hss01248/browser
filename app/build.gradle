@@ -35,4 +35,5 @@ dependencies {
     implementation 'com.mobapphome.library:mah-encryptor-lib:1.0.1'
     implementation 'androidx.preference:preference:1.1.0'
     implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
+    implementation 'com.github.skyNet2017:webviewdebug:1.1.5'
 }
