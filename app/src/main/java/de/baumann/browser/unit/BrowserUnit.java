@@ -12,6 +12,9 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
 import android.text.TextUtils;
@@ -26,6 +29,9 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.liulishuo.okdownload.DownloadTask;
+import com.liulishuo.okdownload.core.cause.EndCause;
+import com.liulishuo.okdownload.core.listener.DownloadListener2;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -34,6 +40,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -236,23 +243,36 @@ public class BrowserUnit {
         return false;
     }
 
-    public static void startDownload(String url, String contentDisposition, String mimeType,String fileNameByUser, Context context) {
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-        String filename = URLUtil.guessFileName(url, contentDisposition, mimeType); // Maybe unexpected filename.
+    /**
+     * 系统的download不够隐秘和静默,需要更换下载引擎
+     * @param url
+     * @param contentDisposition
+     * @param mimeType
+     * @param fileNameByUser
+     * @param context
+     */
+    public static void startDownload(String url, String contentDisposition,
+                                     String mimeType,String fileNameByUser,
+                                     Context context) {
+
+        String filename = URLUtil.guessFileName(url, contentDisposition, mimeType);
+        // Maybe unexpected filename.
         if(!TextUtils.isEmpty(fileNameByUser)){
             filename = fileNameByUser;
         }
+        Uri uri = getSaveUri(url,filename,mimeType);
 
+        downloadByOkhttp(uri.getPath(),filename,url,mimeType,context);
+
+
+       /* DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
         CookieManager cookieManager = CookieManager.getInstance();
         String cookie = cookieManager.getCookie(url);
         request.addRequestHeader("Cookie", cookie);
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setTitle(filename);
         request.setMimeType(mimeType);
-
-        Uri uri = getSaveUri(url,filename,mimeType);
         request.setDestinationUri(uri);
-        //request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
         DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         assert manager != null;
 
@@ -263,28 +283,49 @@ public class BrowserUnit {
                 HelperUnit.grantPermissionsStorage(activity);
             } else {
                 manager.enqueue(request);
-                /*try {
-                    NinjaToast.show(context, R.string.toast_start_download);
-                } catch (Exception e) {
-                    Toast.makeText(context, R.string.toast_start_download, Toast.LENGTH_SHORT).show();
-                }*/
             }
         } else {
             manager.enqueue(request);
-            /*try {
-                NinjaToast.show(context, R.string.toast_start_download);
-            } catch (Exception e) {
-                Toast.makeText(context, R.string.toast_start_download, Toast.LENGTH_SHORT).show();
-            }*/
-        }
+        }*/
+    }
+
+    private static void downloadByOkhttp(String path, String filename, final String url, String mimeType, final Context context) {
+        new DownloadTask.Builder(url,new File(path))
+                // the minimal interval millisecond for callback progress
+                .setMinIntervalMillisCallbackProcess(30)
+                // do re-download even if the task has already been completed in the past.
+                .setPassIfAlreadyCompleted(true)
+                .build().enqueue(new DownloadListener2() {
+            @Override
+            public void taskStart(@NonNull DownloadTask task) {
+
+            }
+
+            @Override
+            public void taskEnd(@NonNull DownloadTask task, @NonNull EndCause cause, @Nullable Exception realCause) {
+                if(EndCause.COMPLETED.equals(cause)){
+                    NinjaToast.show(context,"download success:\n"+url);
+                }
+            }
+        });
+
+
     }
 
     private static Uri getSaveUri(String url, String filename, String mimeType) {
         Uri uri0 = Uri.parse(url);
         String host = uri0.getHost();
-        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),"ninjiaa");
+        File dir = new File(Environment.getExternalStorageDirectory(),"ninjiaa");
         if(!dir.exists()){
             dir.mkdirs();
+        }
+        File hide = new File(dir,".nomedia");
+        if(!hide.exists()){
+            try {
+                hide.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         File file = new File(dir,filename);
         Uri uri = Uri.fromFile(file);

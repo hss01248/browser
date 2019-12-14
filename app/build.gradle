@@ -36,4 +36,12 @@ dependencies {
     implementation 'androidx.preference:preference:1.1.0'
     implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
     implementation 'com.github.skyNet2017:webviewdebug:1.1.5'
+
+    // core
+    implementation 'com.liulishuo.okdownload:okdownload:1.0.6'
+// provide sqlite to store breakpoints
+    implementation 'com.liulishuo.okdownload:sqlite:1.0.6'
+// provide okhttp to connect to backend
+    implementation 'com.liulishuo.okdownload:okhttp:1.0.6'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
 }
